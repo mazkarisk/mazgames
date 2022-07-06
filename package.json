@@ -1,7 +1,6 @@
 {
   "name": "mazgames",
   "version": "0.0.0",
-  "description": "A sample Node.js app using Express 4",
   "engines": {
     "node": "16.x"
   },
