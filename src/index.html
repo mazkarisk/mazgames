@@ -1,44 +1,67 @@
 <html>
-  <body>
-    <h1>simple chat</h1>
-    <input id="inputText" type="text">
-    <input id="sendButton" type="submit">
-    <ul id="messageList" />
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
+<head>
 
-      const socket = io();
+<script src="/socket.io/socket.io.js"></script>
+<script>
 
-      const clearText = () => {
-        document.getElementById('inputText').value = '';
-      }
+	// 多分おまじない的なやつ
+	const socket = io();
 
-      const addMessageList = (message) => {
-        const ul = document.getElementById('messageList');
-        const li = document.createElement('li');
-        const text = document.createTextNode(message);
-        li.appendChild(text);
-        ul.appendChild(li);
-      };
+	// メッセージを一覧に追加する
+	const addMessageList = (message) => {
+		const ul = document.getElementById('messageList');
+		const li = document.createElement('li');
+		const text = document.createTextNode(message);
+		li.appendChild(text);
+		ul.appendChild(li);
+	};
+	
+	// ウィンドウの読み込みが終わったときに実行される
+	window.onload = function() {
+	
+		//送信ボタンがクリックされた場合のイベントを設定しておく
+		document.getElementById('sendButton').addEventListener('click', () => {
 
-      document.getElementById('sendButton').addEventListener('click', () => {
-        let inputMessage = document.getElementById('inputText').value;
+			// テキストボックスに入力された文字列を取得
+			let inputMessage = document.getElementById('inputText').value;
 
-        if (inputMessage === '') {
-          return;
-        }
+			// テキストボックスが空なら中止
+			if (inputMessage === '') {
+				return;
+			}
 
-        socket.emit('sendMessage', inputMessage);
-        clearText();
-      });
+			// メッセージ送信用のソケット通信を投げる
+			socket.emit('sendMessage', inputMessage);
+			
+			// テキストボックスの中身をクリア
+			document.getElementById('inputText').value = '';
+		});
+		
+		// ソケットIDの割り当てをサーバーに要求する
+		socket.emit('requestId', "");
+	}
 
-      //  'receiveMessage' イベントの発火を検知
-      //  第一引数には受信したメッセージが入る
-      socket.on('receiveMessage', (message) => {
-        // 受信したメッセージをulタグに挿入
-        addMessageList(message);
-      });
-    </script>
-  </body>
+	// 'responseId' イベントの発火を検知し、IDを表示する
+	socket.on('responseId', (message) => {
+		addMessageList("サーバーへの接続成功。あなたのidは次の通りです。 : " + message);
+	});
+	
+	// 'receiveMessage' イベントの発火を検知し、サーバ側から引数で渡されたメッセージを一覧に追加する
+	socket.on('receiveMessage', (message) => {
+		addMessageList(message);
+	});
+
+</script>
+
+</head>
+
+<body>
+
+<h1>simple chat</h1>
+<input id="inputText" type="text">
+<input id="sendButton" type="submit">
+<ul id="messageList" />
+
+</body>
 </html>
