@@ -36,6 +36,7 @@ io.on('connection', (socket) => {
 		io.to(id).emit('responseId', id);
 	});
 	
+	// クライアントから送られてきた操作内容を全接続者に再送する
 	socket.on('sendStone', (message) => {
 		io.emit('receiveStone', message);
 	});
