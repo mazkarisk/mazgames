@@ -7,6 +7,8 @@
 
 	// 多分おまじない的なやつ
 	const socket = io();
+	
+	let selectStone = 1; // 0:なし, 1:白, 2:黒
 
 	// メッセージを一覧に追加する
 	const addMessageList = (message) => {
@@ -15,6 +17,25 @@
 		const text = document.createTextNode(message);
 		li.appendChild(text);
 		ul.appendChild(li);
+	};
+	
+	// 石を置いたりする処理
+	const updateStoneGlobal = (stone, x, y) => {
+		socket.emit('sendStone', stone + "," + x + "," + y);
+	};
+	
+	// 石を置いたりする処理
+	const updateStoneLocal = (stone, x, y) => {
+		if (stone == 0) {
+			document.getElementById('grid'+x+y).textContent = '　';
+		} else {
+			document.getElementById('grid'+x+y).textContent = '●';
+			if (stone == 1) {
+				document.getElementById('grid'+x+y).style.color = 'white';
+			} else {
+				document.getElementById('grid'+x+y).style.color = 'black';
+			}
+		}
 	};
 	
 	// ウィンドウの読み込みが終わったときに実行される
@@ -38,18 +59,98 @@
 			document.getElementById('inputText').value = '';
 		});
 		
-		// ソケットIDの割り当てをサーバーに要求する
-		socket.emit('requestId', "");
-	}
+		document.getElementById("grid11").onclick = function() { updateStoneGlobal(selectStone, 1, 1); }
+		document.getElementById("grid12").onclick = function() { updateStoneGlobal(selectStone, 1, 2); }
+		document.getElementById("grid13").onclick = function() { updateStoneGlobal(selectStone, 1, 3); }
+		document.getElementById("grid14").onclick = function() { updateStoneGlobal(selectStone, 1, 4); }
+		document.getElementById("grid15").onclick = function() { updateStoneGlobal(selectStone, 1, 5); }
+		document.getElementById("grid16").onclick = function() { updateStoneGlobal(selectStone, 1, 6); }
+		document.getElementById("grid17").onclick = function() { updateStoneGlobal(selectStone, 1, 7); }
+		document.getElementById("grid18").onclick = function() { updateStoneGlobal(selectStone, 1, 8); }
+		document.getElementById("grid21").onclick = function() { updateStoneGlobal(selectStone, 2, 1); }
+		document.getElementById("grid22").onclick = function() { updateStoneGlobal(selectStone, 2, 2); }
+		document.getElementById("grid23").onclick = function() { updateStoneGlobal(selectStone, 2, 3); }
+		document.getElementById("grid24").onclick = function() { updateStoneGlobal(selectStone, 2, 4); }
+		document.getElementById("grid25").onclick = function() { updateStoneGlobal(selectStone, 2, 5); }
+		document.getElementById("grid26").onclick = function() { updateStoneGlobal(selectStone, 2, 6); }
+		document.getElementById("grid27").onclick = function() { updateStoneGlobal(selectStone, 2, 7); }
+		document.getElementById("grid28").onclick = function() { updateStoneGlobal(selectStone, 2, 8); }
+		document.getElementById("grid31").onclick = function() { updateStoneGlobal(selectStone, 3, 1); }
+		document.getElementById("grid32").onclick = function() { updateStoneGlobal(selectStone, 3, 2); }
+		document.getElementById("grid33").onclick = function() { updateStoneGlobal(selectStone, 3, 3); }
+		document.getElementById("grid34").onclick = function() { updateStoneGlobal(selectStone, 3, 4); }
+		document.getElementById("grid35").onclick = function() { updateStoneGlobal(selectStone, 3, 5); }
+		document.getElementById("grid36").onclick = function() { updateStoneGlobal(selectStone, 3, 6); }
+		document.getElementById("grid37").onclick = function() { updateStoneGlobal(selectStone, 3, 7); }
+		document.getElementById("grid38").onclick = function() { updateStoneGlobal(selectStone, 3, 8); }
+		document.getElementById("grid41").onclick = function() { updateStoneGlobal(selectStone, 4, 1); }
+		document.getElementById("grid42").onclick = function() { updateStoneGlobal(selectStone, 4, 2); }
+		document.getElementById("grid43").onclick = function() { updateStoneGlobal(selectStone, 4, 3); }
+		document.getElementById("grid44").onclick = function() { updateStoneGlobal(selectStone, 4, 4); }
+		document.getElementById("grid45").onclick = function() { updateStoneGlobal(selectStone, 4, 5); }
+		document.getElementById("grid46").onclick = function() { updateStoneGlobal(selectStone, 4, 6); }
+		document.getElementById("grid47").onclick = function() { updateStoneGlobal(selectStone, 4, 7); }
+		document.getElementById("grid48").onclick = function() { updateStoneGlobal(selectStone, 4, 8); }
+		document.getElementById("grid51").onclick = function() { updateStoneGlobal(selectStone, 5, 1); }
+		document.getElementById("grid52").onclick = function() { updateStoneGlobal(selectStone, 5, 2); }
+		document.getElementById("grid53").onclick = function() { updateStoneGlobal(selectStone, 5, 3); }
+		document.getElementById("grid54").onclick = function() { updateStoneGlobal(selectStone, 5, 4); }
+		document.getElementById("grid55").onclick = function() { updateStoneGlobal(selectStone, 5, 5); }
+		document.getElementById("grid56").onclick = function() { updateStoneGlobal(selectStone, 5, 6); }
+		document.getElementById("grid57").onclick = function() { updateStoneGlobal(selectStone, 5, 7); }
+		document.getElementById("grid58").onclick = function() { updateStoneGlobal(selectStone, 5, 8); }
+		document.getElementById("grid61").onclick = function() { updateStoneGlobal(selectStone, 6, 1); }
+		document.getElementById("grid62").onclick = function() { updateStoneGlobal(selectStone, 6, 2); }
+		document.getElementById("grid63").onclick = function() { updateStoneGlobal(selectStone, 6, 3); }
+		document.getElementById("grid64").onclick = function() { updateStoneGlobal(selectStone, 6, 4); }
+		document.getElementById("grid65").onclick = function() { updateStoneGlobal(selectStone, 6, 5); }
+		document.getElementById("grid66").onclick = function() { updateStoneGlobal(selectStone, 6, 6); }
+		document.getElementById("grid67").onclick = function() { updateStoneGlobal(selectStone, 6, 7); }
+		document.getElementById("grid68").onclick = function() { updateStoneGlobal(selectStone, 6, 8); }
+		document.getElementById("grid71").onclick = function() { updateStoneGlobal(selectStone, 7, 1); }
+		document.getElementById("grid72").onclick = function() { updateStoneGlobal(selectStone, 7, 2); }
+		document.getElementById("grid73").onclick = function() { updateStoneGlobal(selectStone, 7, 3); }
+		document.getElementById("grid74").onclick = function() { updateStoneGlobal(selectStone, 7, 4); }
+		document.getElementById("grid75").onclick = function() { updateStoneGlobal(selectStone, 7, 5); }
+		document.getElementById("grid76").onclick = function() { updateStoneGlobal(selectStone, 7, 6); }
+		document.getElementById("grid77").onclick = function() { updateStoneGlobal(selectStone, 7, 7); }
+		document.getElementById("grid78").onclick = function() { updateStoneGlobal(selectStone, 7, 8); }
+		document.getElementById("grid81").onclick = function() { updateStoneGlobal(selectStone, 8, 1); }
+		document.getElementById("grid82").onclick = function() { updateStoneGlobal(selectStone, 8, 2); }
+		document.getElementById("grid83").onclick = function() { updateStoneGlobal(selectStone, 8, 3); }
+		document.getElementById("grid84").onclick = function() { updateStoneGlobal(selectStone, 8, 4); }
+		document.getElementById("grid85").onclick = function() { updateStoneGlobal(selectStone, 8, 5); }
+		document.getElementById("grid86").onclick = function() { updateStoneGlobal(selectStone, 8, 6); }
+		document.getElementById("grid87").onclick = function() { updateStoneGlobal(selectStone, 8, 7); }
+		document.getElementById("grid88").onclick = function() { updateStoneGlobal(selectStone, 8, 8); }
+		
+		document.getElementById("setBlank").onclick = function() { selectStone = 0; }
+		document.getElementById("setWhite").onclick = function() { selectStone = 1; }
+		document.getElementById("setBlack").onclick = function() { selectStone = 2; }
 
-	// 'responseId' イベントの発火を検知し、IDを表示する
-	socket.on('responseId', (message) => {
-		addMessageList("サーバーへの接続成功。あなたのidは次の通りです。 : " + message);
-	});
+		// 初回接続時にソケットIDの割り当てをサーバーに要求
+		socket.emit('requestId', "");
+		
+		// 中心の石を配置
+		updateStoneGlobal(1,4,4);
+		updateStoneGlobal(2,4,5);
+		updateStoneGlobal(2,5,4);
+		updateStoneGlobal(1,5,5);
+	}
 	
 	// 'receiveMessage' イベントの発火を検知し、サーバ側から引数で渡されたメッセージを一覧に追加する
 	socket.on('receiveMessage', (message) => {
 		addMessageList(message);
+	});
+	
+	// 'receiveMessage' イベントの発火を検知し、サーバ側から引数で渡されたメッセージを一覧に追加する
+	socket.on('responseId', (message) => {
+		addMessageList('接続しました。id:' + message);
+	});
+
+	socket.on('receiveStone', (message) => {
+		let ary = message.split(',');
+		updateStoneLocal(ary[0],ary[1],ary[2])
 	});
 
 </script>
@@ -58,7 +159,23 @@
 
 <body>
 
-<h1>simple chat</h1>
+<h1>MazReversi</h1>
+
+
+<table border="1" bgcolor="#40c040">
+  <tr><td id = "grid11">　</td>	<td id = "grid21">　</td>	<td id = "grid31">　</td>	<td id = "grid41">　</td>	<td id = "grid51">　</td>	<td id = "grid61">　</td>	<td id = "grid71">　</td>	<td id = "grid81">　</td></tr>
+  <tr><td id = "grid12">　</td>	<td id = "grid22">　</td>	<td id = "grid32">　</td>	<td id = "grid42">　</td>	<td id = "grid52">　</td>	<td id = "grid62">　</td>	<td id = "grid72">　</td>	<td id = "grid82">　</td></tr>
+  <tr><td id = "grid13">　</td>	<td id = "grid23">　</td>	<td id = "grid33">　</td>	<td id = "grid43">　</td>	<td id = "grid53">　</td>	<td id = "grid63">　</td>	<td id = "grid73">　</td>	<td id = "grid83">　</td></tr>
+  <tr><td id = "grid14">　</td>	<td id = "grid24">　</td>	<td id = "grid34">　</td>	<td id = "grid44">　</td>	<td id = "grid54">　</td>	<td id = "grid64">　</td>	<td id = "grid74">　</td>	<td id = "grid84">　</td></tr>
+  <tr><td id = "grid15">　</td>	<td id = "grid25">　</td>	<td id = "grid35">　</td>	<td id = "grid45">　</td>	<td id = "grid55">　</td>	<td id = "grid65">　</td>	<td id = "grid75">　</td>	<td id = "grid85">　</td></tr>
+  <tr><td id = "grid16">　</td>	<td id = "grid26">　</td>	<td id = "grid36">　</td>	<td id = "grid46">　</td>	<td id = "grid56">　</td>	<td id = "grid66">　</td>	<td id = "grid76">　</td>	<td id = "grid86">　</td></tr>
+  <tr><td id = "grid17">　</td>	<td id = "grid27">　</td>	<td id = "grid37">　</td>	<td id = "grid47">　</td>	<td id = "grid57">　</td>	<td id = "grid67">　</td>	<td id = "grid77">　</td>	<td id = "grid87">　</td></tr>
+  <tr><td id = "grid18">　</td>	<td id = "grid28">　</td>	<td id = "grid38">　</td>	<td id = "grid48">　</td>	<td id = "grid58">　</td>	<td id = "grid68">　</td>	<td id = "grid78">　</td>	<td id = "grid88">　</td></tr>
+</table>
+<button type="button" id = "setBlank">石を取り除く</button>
+<button type="button" id = "setWhite">白い石を置く</button>
+<button type="button" id = "setBlack">黒い石を置く</button>
+<br />
 <input id="inputText" type="text">
 <input id="sendButton" type="submit">
 <ul id="messageList" />
