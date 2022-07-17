@@ -38,6 +38,8 @@
 			let playerIndex = playerName.indexOf(document.getElementById('inputText').value);
 			traveled[playerIndex] += deme;
 			refresh();
+			let json = JSON.stringify({playerName: playerName, traveled: traveled});
+			socket.emit('mazsugoroku_rollDice', json);
 		}
 		
 		refresh();
@@ -48,7 +50,7 @@
 		drawRect(0, 0, 1280, 720, '#dec');
 		
 		// ます
-		for(let i = 0; i < 10; i++){
+		for(let i = 0; i < 15; i++){
 			drawRect(40 + i * 80, 40, 40, 40, '#48c');
 		}
 		
@@ -79,9 +81,26 @@
 		let responseDataParsed = JSON.parse(message);
 		
 		playerName = responseDataParsed.playerName;
-		document.getElementById("playerName0").textContent = responseDataParsed.playerName[0];
-		document.getElementById("playerName1").textContent = responseDataParsed.playerName[1];
+		document.getElementById("playerName0").textContent = playerName[0];
+		document.getElementById("playerName1").textContent = playerName[1];
+		
 	});
+
+	// さいころ振った後の受信処理
+	socket.on('mazsugoroku_rollDice_reflected', (message) => {
+		
+		// 受け取ったJSONを解読する
+		let responseDataParsed = JSON.parse(message);
+		
+		playerName = responseDataParsed.playerName;
+		document.getElementById("playerName0").textContent = playerName[0];
+		document.getElementById("playerName1").textContent = playerName[1];
+		traveled = responseDataParsed.traveled;
+		document.getElementById("traveled0").textContent = traveled[0];
+		document.getElementById("traveled1").textContent = traveled[1];
+		refresh();
+	});
+
 
 </script>
 
@@ -100,8 +119,8 @@
 
 <table border="1" bgcolor="#cccccc">
   <tr><th>id</th><th>状態</th><th>プレイヤー名</th><th>移動距離</th></tr>
-  <tr><td>1</td><td id="playerState0"></td><td id="playerName0">(空席)</td><td>0</td></tr>
-  <tr><td>2</td><td id="playerState1"></td><td id="playerName1">(空席)</td><td>0</td></tr>
+  <tr><td>1</td><td id="playerState0"></td><td id="playerName0">(空席)</td><td id="traveled0">0</td></tr>
+  <tr><td>2</td><td id="playerState1"></td><td id="playerName1">(空席)</td><td id="traveled1">0</td></tr>
 </table>
 
 <div>

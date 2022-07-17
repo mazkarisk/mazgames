@@ -74,4 +74,9 @@ io.on('connection', (socket) => {
 		let responseJson = JSON.stringify({playerName: playerName, traveled: traveled});
 		io.emit('mazsugoroku_login_response', responseJson); // JSON 形式への変換
 	});
+	
+	// クライアントから送られてきた操作内容を全接続者に再送する
+	socket.on('mazsugoroku_rollDice', (message) => {
+		io.emit('mazsugoroku_rollDice_reflected', message);
+	});
 });
