@@ -28,14 +28,16 @@
 			// メッセージ送信用のソケット通信を投げる
 			socket.emit('mazsugoroku_login_request', inputName);
 			
-			// テキストボックスの中身をクリア
-			document.getElementById('loginButton').value = '';
 		};
 		
 		// ボタンにクリック時の処理を設定する
 		document.getElementById("rollDice").onclick = function() {
-			alert(Math.ceil(Math.random()*6));
-		
+
+			let deme = Math.ceil(Math.random()*6);
+			document.getElementById("deme").textContent = deme;
+			let playerIndex = playerName.indexOf(document.getElementById('inputText').value);
+			traveled[playerIndex] += deme;
+			refresh();
 		}
 		
 		refresh();
@@ -51,8 +53,8 @@
 		}
 		
 		// プレイヤー
-		drawText('👨‍🏫', 40, 60, '#000');
-		drawText('👨‍🔧', 40, 100, '#000');
+		drawText('👨‍🏫', 40 + traveled[0] * 80, 60, '#000');
+		drawText('👨‍🔧', 40 + traveled[1] * 80, 100, '#000');
 		
 	}
 	
@@ -70,12 +72,13 @@
 		context.fillText(text, x, y);
 	}
 	
-	// ソケットIDの受信処理
+	// ユーザー名の受信処理
 	socket.on('mazsugoroku_login_response', (message) => {
 		
 		// 受け取ったJSONを解読する
 		let responseDataParsed = JSON.parse(message);
 		
+		playerName = responseDataParsed.playerName;
 		document.getElementById("playerName0").textContent = responseDataParsed.playerName[0];
 		document.getElementById("playerName1").textContent = responseDataParsed.playerName[1];
 	});
