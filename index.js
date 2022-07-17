@@ -9,9 +9,20 @@ const app = express();
 const server = http.Server(app);
 const io = socketIo(server);
 
+
+// mazsugoroku 関連の変数
+let playerName = ['', ''];
+let traveled = [0, 0];
+
 // webサーバーの設定
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/src/index.html');
+});
+app.get('/mazreversi/', (req, res) => {
+	res.sendFile(__dirname + '/src/mazreversi.html');
+});
+app.get('/mazsugoroku/', (req, res) => {
+	res.sendFile(__dirname + '/src/mazsugoroku.html');
 });
 server.listen(PORT, () => {
 	console.log(`listening on port ${PORT}`);
@@ -19,8 +30,9 @@ server.listen(PORT, () => {
 
 // ソケット通信の設定
 io.on('connection', (socket) => {
-	console.log('user connected');
+	//console.log('user connected');
 
+	// ########    mazreversi    ########
 	// 'sendMessage' というイベント名で受信できる
 	// 第一引数には受信したメッセージが入り、ログに出力する
 	socket.on('sendMessage', (message) => {
@@ -39,5 +51,27 @@ io.on('connection', (socket) => {
 	// クライアントから送られてきた操作内容を全接続者に再送する
 	socket.on('sendStone', (message) => {
 		io.emit('receiveStone', message);
+	});
+	
+	
+	// ########    mazsugoroku    ########
+
+	// ログイン(着席)処理
+	socket.on('mazsugoroku_login_request', (message) => {
+		
+		// 空席を探す
+		emptyChair = -1;
+		for(let i = 0; i < 2; i++){
+			// 見つかれば割りあて
+			if (playerName[i] == '') {
+				playerName[i] = message;
+				emptyChair = i;
+				break;
+			}
+		}
+		
+		// 現在のプレイヤー名を返す
+		let responseJson = JSON.stringify({playerName: playerName, traveled: traveled});
+		io.to(socket.id).emit('mazsugoroku_login_response', responseJson); // JSON 形式への変換
 	});
 });

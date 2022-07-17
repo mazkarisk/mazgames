@@ -1,0 +1,128 @@
+<html>
+
+<head>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+	// 多分おまじない的なやつ
+	const socket = io();
+	
+	let selectStone = 0; // 0:なし, 1:白, 2:黒
+
+	// メッセージを一覧に追加する
+	const addMessageList = (message) => {
+		const ul = document.getElementById('messageList');
+		const li = document.createElement('li');
+		const text = document.createTextNode(message);
+		li.appendChild(text);
+		ul.appendChild(li);
+	};
+	
+	// 石を置いたりする処理(サーバーに投げる)
+	const updateStoneGlobal = (stone, x, y) => {
+		socket.emit('sendStone', stone + "," + x + "," + y);
+	};
+	
+	// 石を置いたりする処理(サーバーから受け取る)
+	const updateStoneLocal = (stone, x, y) => {
+		if (stone == 0) {
+			document.getElementById('grid'+x+y).textContent = '　';
+		} else {
+			document.getElementById('grid'+x+y).textContent = '●';
+			if (stone == 1) {
+				document.getElementById('grid'+x+y).style.color = 'white';
+			} else {
+				document.getElementById('grid'+x+y).style.color = 'black';
+			}
+		}
+	};
+	
+	// ウィンドウの読み込みが終わったときに実行される
+	window.onload = function() {
+	
+		//送信ボタンがクリックされた場合のイベントを設定しておく
+		document.getElementById('sendButton').addEventListener('click', () => {
+
+			// テキストボックスに入力された文字列を取得
+			let inputMessage = document.getElementById('inputText').value;
+
+			// テキストボックスが空なら中止
+			if (inputMessage === '') {
+				return;
+			}
+
+			// メッセージ送信用のソケット通信を投げる
+			socket.emit('sendMessage', inputMessage);
+			
+			// テキストボックスの中身をクリア
+			document.getElementById('inputText').value = '';
+		});
+		
+		// 8x8の角グリッドにクリック時の処理を設定する
+		for (let y = 1; y <= 8; y++) {
+			for (let x = 1; x <= 8; x++) {
+				document.getElementById("grid" + x + y).onclick = function() { updateStoneGlobal(selectStone, x, y); }
+			}
+		}
+		
+		// ボタンにクリック時の処理を設定する
+		document.getElementById("setBlank").onclick = function() { selectStone = 0; }
+		document.getElementById("setWhite").onclick = function() { selectStone = 1; }
+		document.getElementById("setBlack").onclick = function() { selectStone = 2; }
+
+		// 初回接続時にソケットIDの割り当てをサーバーに要求
+		socket.emit('requestId', "");
+		
+		// 中心の4個の石を配置
+		updateStoneGlobal(1,4,4);
+		updateStoneGlobal(2,4,5);
+		updateStoneGlobal(2,5,4);
+		updateStoneGlobal(1,5,5);
+	}
+	
+	// ソケットIDの受信処理
+	socket.on('responseId', (message) => {
+		addMessageList('接続しました。id:' + message);
+	});
+	
+	// 'receiveMessage' イベントの発火を検知し、サーバ側から引数で渡されたメッセージを一覧に追加する
+	socket.on('receiveMessage', (message) => {
+		addMessageList(message);
+	});
+
+	// 石を置いた処理を
+	socket.on('receiveStone', (message) => {
+		let ary = message.split(',');
+		updateStoneLocal(ary[0], ary[1], ary[2])
+	});
+
+</script>
+
+</head>
+
+<body>
+
+<h1>MazReversi</h1>
+
+
+<table border="1" bgcolor="#40c040">
+  <tr><td id = "grid11">　</td>	<td id = "grid21">　</td>	<td id = "grid31">　</td>	<td id = "grid41">　</td>	<td id = "grid51">　</td>	<td id = "grid61">　</td>	<td id = "grid71">　</td>	<td id = "grid81">　</td></tr>
+  <tr><td id = "grid12">　</td>	<td id = "grid22">　</td>	<td id = "grid32">　</td>	<td id = "grid42">　</td>	<td id = "grid52">　</td>	<td id = "grid62">　</td>	<td id = "grid72">　</td>	<td id = "grid82">　</td></tr>
+  <tr><td id = "grid13">　</td>	<td id = "grid23">　</td>	<td id = "grid33">　</td>	<td id = "grid43">　</td>	<td id = "grid53">　</td>	<td id = "grid63">　</td>	<td id = "grid73">　</td>	<td id = "grid83">　</td></tr>
+  <tr><td id = "grid14">　</td>	<td id = "grid24">　</td>	<td id = "grid34">　</td>	<td id = "grid44">　</td>	<td id = "grid54">　</td>	<td id = "grid64">　</td>	<td id = "grid74">　</td>	<td id = "grid84">　</td></tr>
+  <tr><td id = "grid15">　</td>	<td id = "grid25">　</td>	<td id = "grid35">　</td>	<td id = "grid45">　</td>	<td id = "grid55">　</td>	<td id = "grid65">　</td>	<td id = "grid75">　</td>	<td id = "grid85">　</td></tr>
+  <tr><td id = "grid16">　</td>	<td id = "grid26">　</td>	<td id = "grid36">　</td>	<td id = "grid46">　</td>	<td id = "grid56">　</td>	<td id = "grid66">　</td>	<td id = "grid76">　</td>	<td id = "grid86">　</td></tr>
+  <tr><td id = "grid17">　</td>	<td id = "grid27">　</td>	<td id = "grid37">　</td>	<td id = "grid47">　</td>	<td id = "grid57">　</td>	<td id = "grid67">　</td>	<td id = "grid77">　</td>	<td id = "grid87">　</td></tr>
+  <tr><td id = "grid18">　</td>	<td id = "grid28">　</td>	<td id = "grid38">　</td>	<td id = "grid48">　</td>	<td id = "grid58">　</td>	<td id = "grid68">　</td>	<td id = "grid78">　</td>	<td id = "grid88">　</td></tr>
+</table>
+<button type="button" id = "setBlank">石を取り除く</button>
+<button type="button" id = "setWhite">白い石を置く</button>
+<button type="button" id = "setBlack">黒い石を置く</button>
+<br />
+<input id="inputText" type="text">
+<input id="sendButton" type="submit">
+<ul id="messageList" />
+
+</body>
+</html>

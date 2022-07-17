@@ -1,0 +1,94 @@
+<html>
+
+<head>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+	// 多分おまじない的なやつ
+	const socket = io();
+	
+	// ウィンドウの読み込みが終わったときに実行される
+	window.onload = function() {
+	
+		//送信ボタンがクリックされた場合のイベントを設定しておく
+		document.getElementById('loginButton').onclick = function() {
+
+			// テキストボックスに入力された文字列を取得
+			let inputName = document.getElementById('inputText').value;
+
+			// テキストボックスが空なら中止
+			if (inputName === '') {
+				return;
+			}
+
+			// メッセージ送信用のソケット通信を投げる
+			socket.emit('mazsugoroku_login_request', inputName);
+			
+			// テキストボックスの中身をクリア
+			document.getElementById('loginButton').value = '';
+		};
+		
+		// ボタンにクリック時の処理を設定する
+		document.getElementById("setBlank").onclick = function() {}
+		
+		refresh();
+	}
+	
+	function refresh() {
+		// 背景
+		drawRect(0, 0, 1280, 720, '#dec');
+		
+		// ます
+		for(let i = 0; i < 10; i++){
+			drawRect(40 + i * 80, 40, 40, 40, '#48c');
+		}
+	}
+	
+	function drawRect(x, y, width, height, fillStyle) {
+		var canvas = document.getElementById("canvas");
+		var context = canvas.getContext("2d");
+		context.fillStyle = fillStyle;
+		context.fillRect(x, y, width, height);
+	}
+	
+	// ソケットIDの受信処理
+	socket.on('mazsugoroku_login_response', (message) => {
+		
+		// 受け取ったJSONを解読する
+		let responseDataParsed = JSON.parse(message);
+		
+		document.getElementById("playerName0").textContent = responseDataParsed.playerName[0];
+		document.getElementById("playerName1").textContent = responseDataParsed.playerName[1];
+	});
+
+</script>
+
+</head>
+
+<body>
+
+<h1>mazsugoroku</h1>
+
+<div>
+	<input id="inputText" type="text">
+	<button type="button" id = "loginButton">着席</button>
+</div>
+
+<canvas id="canvas" width="1280" height="720"></canvas>
+
+<table border="1" bgcolor="#cccccc">
+  <tr><th>id</th><th>状態</th><th>プレイヤー名</th><th>移動距離</th></tr>
+  <tr><td>1</td><td id="playerState0"></td><td id="playerName0">(空席)</td><td>0</td></tr>
+  <tr><td>2</td><td id="playerState1"></td><td id="playerName1">(空席)</td><td>0</td></tr>
+</table>
+
+<div>
+	<button type="button" id = "setBlank">さいころを振る</button>
+	<span id="deme"></span>
+</div>
+
+</body>
+</html>
+
+ceesamap
