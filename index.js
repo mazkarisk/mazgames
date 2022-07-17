@@ -72,6 +72,6 @@ io.on('connection', (socket) => {
 		
 		// 現在のプレイヤー名を返す
 		let responseJson = JSON.stringify({playerName: playerName, traveled: traveled});
-		io.to(socket.id).emit('mazsugoroku_login_response', responseJson); // JSON 形式への変換
+		io.emit('mazsugoroku_login_response', responseJson); // JSON 形式への変換
 	});
 });

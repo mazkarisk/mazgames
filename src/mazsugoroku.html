@@ -8,6 +8,9 @@
 	// 多分おまじない的なやつ
 	const socket = io();
 	
+	let playerName = ['', ''];
+	let traveled = [0, 0];
+	
 	// ウィンドウの読み込みが終わったときに実行される
 	window.onload = function() {
 	
@@ -30,7 +33,10 @@
 		};
 		
 		// ボタンにクリック時の処理を設定する
-		document.getElementById("setBlank").onclick = function() {}
+		document.getElementById("rollDice").onclick = function() {
+			alert(Math.ceil(Math.random()*6));
+		
+		}
 		
 		refresh();
 	}
@@ -43,6 +49,11 @@
 		for(let i = 0; i < 10; i++){
 			drawRect(40 + i * 80, 40, 40, 40, '#48c');
 		}
+		
+		// プレイヤー
+		drawText('👨‍🏫', 40, 60, '#000');
+		drawText('👨‍🔧', 40, 100, '#000');
+		
 	}
 	
 	function drawRect(x, y, width, height, fillStyle) {
@@ -50,6 +61,13 @@
 		var context = canvas.getContext("2d");
 		context.fillStyle = fillStyle;
 		context.fillRect(x, y, width, height);
+	}
+	
+	function drawText(text, x, y, fillStyle) {
+		var context = document.getElementById('canvas').getContext('2d');
+		context.font = '48px serif';
+		context.fillStyle = fillStyle;
+		context.fillText(text, x, y);
 	}
 	
 	// ソケットIDの受信処理
@@ -84,7 +102,7 @@
 </table>
 
 <div>
-	<button type="button" id = "setBlank">さいころを振る</button>
+	<button type="button" id = "rollDice">さいころを振る</button>
 	<span id="deme"></span>
 </div>
 
