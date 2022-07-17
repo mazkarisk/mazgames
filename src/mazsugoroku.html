@@ -7,9 +7,12 @@
 
 	// 多分おまじない的なやつ
 	const socket = io();
-	
+		
+	const masumax = 15;
+	 
 	let playerName = ['', ''];
 	let traveled = [0, 0];
+	let victoryPlayer = -1;
 	
 	// ウィンドウの読み込みが終わったときに実行される
 	window.onload = function() {
@@ -37,11 +40,21 @@
 			document.getElementById("deme").textContent = deme;
 			let playerIndex = playerName.indexOf(document.getElementById('inputText').value);
 			traveled[playerIndex] += deme;
+			if (traveled[playerIndex] >= masumax - 1){
+				traveled[playerIndex] = masumax - 1;
+				if (victoryPlayer == -1){
+					victoryPlayer = playerIndex;
+				}
+			}
 			refresh();
-			let json = JSON.stringify({playerName: playerName, traveled: traveled});
+			let json = JSON.stringify({playerName: playerName, traveled: traveled, victoryPlayer: victoryPlayer});
 			socket.emit('mazsugoroku_rollDice', json);
 		}
 		
+		// 盤面のリセット
+		document.getElementById("reset").onclick = function() {
+			socket.emit('mazsugoroku_reset', "");
+		}
 		refresh();
 	}
 	
@@ -50,7 +63,7 @@
 		drawRect(0, 0, 1280, 720, '#dec');
 		
 		// ます
-		for(let i = 0; i < 15; i++){
+		for(let i = 0; i < masumax; i++){
 			drawRect(40 + i * 80, 40, 40, 40, '#48c');
 		}
 		
@@ -58,6 +71,10 @@
 		drawText('👨‍🏫', 40 + traveled[0] * 80, 60, '#000');
 		drawText('👨‍🔧', 40 + traveled[1] * 80, 100, '#000');
 		
+		// 勝ちの表示
+		if (victoryPlayer !== -1){
+			drawText(playerName[victoryPlayer] + 'が勝ちました' ,0, 160, '#F00');
+		}
 	}
 	
 	function drawRect(x, y, width, height, fillStyle) {
@@ -69,7 +86,7 @@
 	
 	function drawText(text, x, y, fillStyle) {
 		var context = document.getElementById('canvas').getContext('2d');
-		context.font = '48px serif';
+		context.font = '36px serif';
 		context.fillStyle = fillStyle;
 		context.fillText(text, x, y);
 	}
@@ -98,8 +115,11 @@
 		traveled = responseDataParsed.traveled;
 		document.getElementById("traveled0").textContent = traveled[0];
 		document.getElementById("traveled1").textContent = traveled[1];
+		victoryPlayer = responseDataParsed.victoryPlayer;
 		refresh();
 	});
+
+
 
 
 </script>
@@ -126,6 +146,7 @@
 <div>
 	<button type="button" id = "rollDice">さいころを振る</button>
 	<span id="deme"></span>
+	<button type="button" id = "reset">リセット</button>
 </div>
 
 </body>
